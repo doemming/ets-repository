@@ -882,6 +882,7 @@ layers.each{layer->
 		throw new TranslatableAssertionError('TR.valueShallNotBeEmpty', assertParams);
 
 	}
+}
 
 if(invalidLayers.size() > 0){
 	String[] assertParams = ['layerid', invalidLayers.join(', ')];
