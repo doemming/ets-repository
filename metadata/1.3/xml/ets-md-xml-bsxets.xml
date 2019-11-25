@@ -103,10 +103,10 @@ let $messages :=
                 let $result :=
                     if (contains($file/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/gmd/gmd.xsd') or contains($file/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://www.isotc211.org/2005/gmd/gmd.xsd') or contains($file/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd')) then
                         try{ 
-							validate:xsd($file/*/, 'https://inspire.ec.europa.eu/draft-schemas/inspire-md-schemas-temp/apiso-inspire/apiso-inspire.xsd') 
+							validate:xsd($file, 'https://inspire.ec.europa.eu/draft-schemas/inspire-md-schemas-temp/apiso-inspire/apiso-inspire.xsd') 
 						} catch * {  "found schemaLocation: " +  $err:description }
                     else
-                        try{ validate:xsd($file/*/) } catch * {  "not found schemaLocation: " + $err:description }
+                        try{ validate:xsd($file) } catch * {  "not found schemaLocation: " + $err:description }
                 return
                 if(not(string-length($result) = 0)) then
                     local:addMessage('TR.invalidSchema',  map { 'filename': local:filename($file), 'count': string($result) })
@@ -117,9 +117,9 @@ let $messages :=
                 let $rid := $record/*/gmd:fileIdentifier/*/text()
                 let $result := 
                     if ( contains($record/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/gmd/gmd.xsd') or contains($record/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://www.isotc211.org/2005/gmd/gmd.xsd') or contains($record/*/gmd:MD_Metadata/@xsi:schemaLocation, 'http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd')) then
-                        try{ validate:xsd($record/*/, 'https://inspire.ec.europa.eu/draft-schemas/inspire-md-schemas-temp/apiso-inspire/apiso-inspire.xsd') } catch * {  "found on fileIdentifier: " + $err:description }
+                        try{ validate:xsd($record, 'https://inspire.ec.europa.eu/draft-schemas/inspire-md-schemas-temp/apiso-inspire/apiso-inspire.xsd') } catch * {  "found on fileIdentifier: " + $err:description }
                     else
-                        try{ validate:xsd($record/*/) } catch * {  "not found on fileIdentifier: " + $err:description }
+                        try{ validate:xsd($record) } catch * {  "not found on fileIdentifier: " + $err:description }
                 return
                 if(not(string-length($result) = 0)) then
                     local:addMessage('TR.xmlSchemaErrorRecord',  map { 'filename': local:filename($record), 'id': $rid, 'error': string($result) })
