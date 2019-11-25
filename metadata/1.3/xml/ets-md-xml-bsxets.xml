@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ExecutableTestSuite xmlns="http://www.interactive-instruments.de/etf/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="EIDe3500038-e37c-4dcf-806c-6bc82d585b3b" xsi:schemaLocation="http://www.interactive-instruments.de/etf/2.0 https://resources.etf-validator.net/schema/v2/val/ignoreRef.xsd">
 	<itemHash>bQ==</itemHash>
-	<remoteResource>https://github.com/inspire-eu-validation/ets-repository/tree/master/metadata/xml</remoteResource>
+	<remoteResource>https://github.com/inspire-eu-validation/ets-repository/tree/master/metadata/1.3/xml</remoteResource>
 	<localPath>/auto</localPath>
 	<label>Conformance class: XML encoding of ISO 19115/19119 metadata</label>
 	<description><![CDATA[This test suite examines XML documents containing gmd:MD_Metadata records against basic requirements for the encoding for metadata in INSPIRE.<br/><br/>
@@ -99,18 +99,22 @@ let $messages :=
 		for $file in $db
         return 
             if ($file/gmd:MD_Metadata/@xsi:schemaLocation) then 
+				let $dummy := local:log("Into if")
                 let $result :=
                     if (contains($file/gmd:MD_Metadata/@xsi:schemaLocation, 'http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/gmd/gmd.xsd') or contains($file/gmd:MD_Metadata/@xsi:schemaLocation, 'http://www.isotc211.org/2005/gmd/gmd.xsd') or contains($file/gmd:MD_Metadata/@xsi:schemaLocation, 'http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd')) then
                         try{ 
+							local:log("found schemaLocation")
 							validate:xsd($file, 'https://inspire.ec.europa.eu/draft-schemas/inspire-md-schemas-temp/apiso-inspire/apiso-inspire.xsd') } catch * {  $err:description }
                     else
                         try{ validate:xsd($file) } catch * {  $err:description }
                 return
                 if(not(string-length($result) = 0)) then
+					local:log("not found schemaLocation")
                     local:addMessage('TR.invalidSchema',  map { 'filename': local:filename($file), 'count': string($result) })
                 else ()
             else
                 for $record in $records
+				let $dummy := local:log("Into else")
                 let $rid := $record/gmd:fileIdentifier/*/text()
                 let $result := 
                     if ( contains($record/gmd:MD_Metadata/@xsi:schemaLocation, 'http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/gmd/gmd.xsd') or contains($record/gmd:MD_Metadata/@xsi:schemaLocation, 'http://www.isotc211.org/2005/gmd/gmd.xsd') or contains($record/gmd:MD_Metadata/@xsi:schemaLocation, 'http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd')) then
